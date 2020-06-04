@@ -65,3 +65,29 @@ function get_template_engine() {
 	return new League\Plates\Engine( $templates_path );
 
 }
+
+function validateRegistrationData( $data 	) {
+
+	$errors = [];
+
+	$email 			= filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
+	$wachtwoord = trim( $_POST['wachtwoord'] );
+
+	if ( $email	=== false ) {
+		$errors['email'] = 'Geen geldig email adres';
+	}
+
+	if ( strlen( $wachtwoord) < 6 ) {
+		$errors['wachtwoord'] = 'Geen geldig wachtwoord (Minimaal 6 tekens)';
+	}
+
+	$data = [
+		'email' => $data['email'],
+		'wachtwoord' => $wachtwoord
+	];
+
+	return [
+		'database' => $data,
+		'errors' => $errors
+	];
+}

@@ -13,7 +13,7 @@
     <h1>Sharing is caring</h1>
 </header>
 <nav>
-    Hoofdmenu
+  menu
 </nav>
 <main>
     <section class="content">
@@ -22,7 +22,7 @@
     </section>
 
     <section>
-      <?php echo $this->section('content');?>
+      <?php echo $this->section('content'); ?>
     </section>
 
     <aside>
