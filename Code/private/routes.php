@@ -20,8 +20,8 @@ SimpleRouter::group( [ 'prefix' => site_url() ], function () {
 
 	//login routes
 	SimpleRouter::get( '/login', 									'LoginController@loginForm' )->name( 'login.form' );
-	SimpleRouter::post( '/login/verwerken', 			'LoginController@VerwerkloginForm' )->name( 'login.verwerk' );
-	SimpleRouter::get( '/ingelogd', 							'LoginController@useringelogd' )->name( 'login.ingelogd' );
+	SimpleRouter::post( '/login/verwerken', 			'LoginController@verwerkLoginForm' )->name( 'login.verwerken' );
+	SimpleRouter::get( '/login/succes', 					'LoginController@gebruikerSucces' )->name( 'login.succes' );
 
 
 
