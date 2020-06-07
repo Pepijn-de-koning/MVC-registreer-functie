@@ -53,15 +53,41 @@ class LoginController {
 		          $_SESSION['user_id'] = $gebruiker['id'];
 		          $_SESSION['voornaam'] = $gebruiker['voornaam'];
 
+							loginGebruiker( $gebruiker );
+
 							$bedanktUrl = url('login.succes');
 							redirect($bedanktUrl);
 		        }
 
 		        else {
-		          $errors['wachtwoord_check'] = 'wachtwoord is niet goed';
+		          $errors['wachtwoord_check'] = 'wachtwoord is niet correct';
 		      }
+
 		    }
+
 		  }
+
 		}
+
+		$template_engine = get_template_engine();
+		echo $template_engine->render( 'login_form', ['errors' => $errors]);
+
 	}
+
+	public function loginSucces(){
+
+		loginCheck();
+
+		$template_engine = get_template_engine();
+		echo $template_engine->render("login_succes");
+
+	}
+
+	public function loguit( ) {
+		loguitGebruiker();
+		redirect(url('login.form') );
+	}
+
+
+
 }

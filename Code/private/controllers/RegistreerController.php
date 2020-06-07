@@ -68,7 +68,7 @@ class RegistreerController {
 				$bedanktUrl = url('registreer.bedankt');
 				redirect($bedanktUrl);
 
-			} else{ 
+			} else{
 				$errors['email'] = 'Dit acount bestaat al';
 			}
 		}

@@ -91,3 +91,22 @@ function validateRegistrationData( $data 	) {
 		'errors' => $errors
 	];
 }
+
+
+function loginGebruiker( $gebruiker ) {
+	$_SESSION['gebruiker_id'] = $gebruiker['id'];
+}
+
+function loguitGebruiker() {
+	unset($_SESSION['gebruiker_id'] );
+}
+function isIngelogd() {
+	return !empty( $_SESSION['gebruiker_id'] );
+}
+
+function loginCheck() {
+	if ( ! isIngelogd() ) {
+		$login_url = url( 'login.form' );
+		redirect( $login_url );
+	}
+}

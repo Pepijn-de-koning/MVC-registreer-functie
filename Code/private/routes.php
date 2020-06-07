@@ -21,8 +21,10 @@ SimpleRouter::group( [ 'prefix' => site_url() ], function () {
 	//login routes
 	SimpleRouter::get( '/login', 									'LoginController@loginForm' )->name( 'login.form' );
 	SimpleRouter::post( '/login/verwerken', 			'LoginController@verwerkLoginForm' )->name( 'login.verwerken' );
-	SimpleRouter::get( '/login/succes', 					'LoginController@gebruikerSucces' )->name( 'login.succes' );
+	SimpleRouter::get( '/loguit', 									'LoginController@loguit' )->name( 'loguit' );
 
+
+	SimpleRouter::get( '/login/succes', 					'LoginController@loginSucces' )->name( 'login.succes' );
 
 
 	// STOP: Tot hier al je eigen URL's zetten
@@ -34,7 +36,6 @@ SimpleRouter::group( [ 'prefix' => site_url() ], function () {
 	} );
 
 } );
-
 
 // Dit zorgt er voor dat bij een niet bestaande route, de 404 pagina wordt getoond
 SimpleRouter::error( function ( Request $request, \Exception $exception ) {
