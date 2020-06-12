@@ -43,6 +43,10 @@ function site_url( $path = '' ) {
 	return get_config( 'BASE_URL' ) . $path;
 }
 
+function absolute_url( $path = '' ) {
+	return get_config( 'BASE_HOST' ) . $path;
+}
+
 function get_config( $name ) {
 	$config = require __DIR__ . '/config.php';
 	$name = strtoupper( $name );
@@ -109,4 +113,103 @@ function loginCheck() {
 		$login_url = url( 'login.form' );
 		redirect( $login_url );
 	}
+}
+
+/**
+ * Maak de SwiftMailer aan en stet hem op de juiste manier in
+ *
+ * @return Swift_Mailer
+ */
+function getSwiftMailer() {
+	$mail_config = get_config( 'MAIL' );
+	$transport   = new \Swift_SmtpTransport( $mail_config['SMTP_HOST'], $mail_config['SMTP_PORT'] );
+	$transport->setUsername($mail_config['SMTP_USER'] );
+	$transport->setPassword($mail_config['SMTP_PASSWORD']);
+
+	$mailer = new \Swift_Mailer( $transport );
+
+	return $mailer;
+}
+
+/**
+ * Maak een Swift_Message met de opgegeven subject, afzender en ontvanger
+ *
+ * @param $to
+ * @param $subject
+ * @param $from_name
+ * @param $from_email
+ *
+ * @return Swift_Message
+ */
+function createEmailMessage( $to, $subject, $from_name, $from_email ) {
+
+	// Create a message
+	$message = new \Swift_Message( $subject );
+	$message->setFrom( [ $from_email => $from_email ] );
+	$message->setTo( $to );
+
+	// Send the message
+	return $message;
+}
+
+/**
+ *
+ * @param $message \Swift_Message De Swift Message waarin de afbeelding ge-embed moet worden
+ * @param $filename string Bestandsnaam van de afbeelding (wordt automatisch uit juiste folder gehaald)
+ *
+ * @return mixed
+ */
+function embedImage( $message, $filename ) {
+	$image_path = get_config( 'WEBROOT' ) . '/images/email/' . $filename;
+	if ( ! file_exists( $image_path ) ) {
+		throw new \RuntimeException( 'Afbeelding bestaat niet: ' . $image_path );
+	}
+
+	if($message) {
+
+	$cid = $message->embed( \Swift_Image::fromPath( $image_path ) );
+
+	return $cid;
+
+	}
+
+	return site_url('/images/email/' . $filename );
+
+}
+
+/**
+ *
+ * Bevestigd een acount met code
+ *
+*/
+
+function bevestigAccount( $code ) {
+
+	$connection = dbConnect();
+	$sql				= "UPDATE `gebruikers` SET `code` = NULL WHERE `code` = :code";
+	$statement  = $connection->prepare( $sql );
+  $params = [
+		'code' => $code
+	];
+	$statement->execute($params);
+}
+
+function stuurVerificatieEmail($email, $code) {
+
+	$url = url( 'registreer.validatie', ['code' => $code] );
+	$absolute_url = absolute_url( $url );
+
+	$mailer = getSwiftMailer();
+
+	$message = createEmailMessage($email, 'Bevestig je acount', 'Sharing is Caring', '29118@ma-web.nl' );
+
+	// $email_text = 'Bevestig jouw account om in te kunnen loggen: ' . $absolute_url;
+
+	$template_engine = get_template_engine();
+	$html = $template_engine->render('bevestiging_email', ['message' => $message, 'url' => $absolute_url]);
+
+	$message->setBody( $html, 'text/html');
+
+	$mailer->send($message);
+
 }

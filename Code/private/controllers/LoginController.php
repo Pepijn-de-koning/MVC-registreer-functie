@@ -47,6 +47,8 @@ class LoginController {
 
 		        $gebruiker = $statement->fetch();
 
+						if ( $gebruiker['code'] === null ) {
+
 		        if ( password_verify( $wachtwoord, $gebruiker['wachtwoord'])){
 
 		          session_start();
@@ -59,20 +61,24 @@ class LoginController {
 							redirect($bedanktUrl);
 		        }
 
-		        else {
-		          $errors['wachtwoord_check'] = 'wachtwoord is niet correct';
-		      }
-
+				else {
+		      $errors['wachtwoord_check'] = 'wachtwoord is niet correct';
 		    }
 
-		  }
+			} else {
+			 		$errors['email'] = 'Uw acount is nog niet bevestigd';
+			}
 
-		}
+	 	}
+
+	}
+
+}
 
 		$template_engine = get_template_engine();
 		echo $template_engine->render( 'login_form', ['errors' => $errors]);
 
-	}
+}
 
 	public function loginSucces(){
 
@@ -87,7 +93,5 @@ class LoginController {
 		loguitGebruiker();
 		redirect(url('login.form') );
 	}
-
-
 
 }

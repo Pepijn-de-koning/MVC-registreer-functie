@@ -3,6 +3,7 @@
 // In dit bestand zet je ALLE functions die iets met data of de database doen
 
 function getUsers() {
+
   $connection = dbConnect();
   $sql        = "SELECT * FROM `gebruikers`";
   $statement  = $connection->query( $sql );
@@ -11,13 +12,29 @@ function getUsers() {
 }
 
 function getUserByEmail($email){
+
   $connection = dbConnect();
-  $sql        = "SELECT * FROM `email` WHERE email = :email";
+  $sql        = "SELECT * FROM `email` WHERE `email` = :email";
   $statement  = $connection->query( $sql );
   $statement->execute( [ 'email' => $email ] );
 
   if($statement->rowCount() ===1) {
     return  $statement->fetch();
+  }
+
+  return false;
+
+}
+
+function getUserByCode( $code ) {
+
+  $connection = dbConnect();
+  $sql        = "SELECT * FROM `gebruikers` WHERE `code` = :code";
+  $statement  = $connection->prepare( $sql );
+  $statement->execute( ['code' => $code ] );
+
+  if ( $statement->rowCount() === 1 ) {
+    return $statement->fetch();
   }
 
   return false;

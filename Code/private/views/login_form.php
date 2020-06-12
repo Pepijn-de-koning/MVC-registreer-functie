@@ -16,6 +16,7 @@
   <p>
    <label for="wachtwoord">Wachtwoord</label> <br>
    <input type="password" name="wachtwoord"/> <br>
+   <small>Nog geen account meld je <a href="<?php echo url("registreer.form") ?>">hier</a> aan</small>
    <?php if (isset( $errors['wachtwoord']  ) ) : ?>
      <?php echo $errors['wachtwoord'] ?>
    <?php endif; ?>

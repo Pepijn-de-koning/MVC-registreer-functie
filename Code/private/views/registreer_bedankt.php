@@ -2,4 +2,4 @@
 
 <h3>Bedankt</h3>
 
-<p>Uw registratie is compleet. U kunt nu inloggen</p>
+<p>Uw registratie is compleet. Na het bevestigen van uw acount kunt u inloggen.</p>
