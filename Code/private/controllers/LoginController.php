@@ -89,9 +89,88 @@ class LoginController {
 
 	}
 
-	public function loguit( ) {
+	public function loguit() {
 		loguitGebruiker();
 		redirect(url('login.form') );
+	}
+
+	public function wachtwoordVergeten() {
+
+		$errors = [];
+		$mail_sent = false;
+
+	  if ( request()->getMethod() === 'post' ) {
+
+			$email = filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
+
+ 		 	if ( $email === false ) {
+	 			$errors['email'] = 'Geen geldig email adres opgegeven';
+      }
+
+ 		  if ( count( $errors ) === 0 ) {
+	 			$gebruiker = getUserByEmail($email);
+
+	 			if ( $gebruiker === false ) {
+		 				$errors['email'] = 'Onbekend account';
+   	 		}
+
+    	}
+
+			if ( count( $errors ) === 0 ) {
+				stuurWachtwoordResetEmail( $email );
+				$mail_sent = true;
+			}
+
+		}
+
+		$template_engine = get_template_engine();
+		echo $template_engine->render( 'wachtwoord_vergeten_form',  ['errors' => $errors,  'mail_sent' => $mail_sent ] );
+
+	}
+
+	public function wachtwoordResetForm($reset_code) {
+
+		$errors = [];
+
+			$gebruiker = getUserByResetCode($reset_code);
+				if ($gebruiker === false) {
+					echo "Geen geldige code";
+					exit;
+				}
+
+				if ( request()->getMethod() === 'post' ) {
+
+					$wachtwoord         = $_POST['password'];
+					$wachtwoord_confirm = $_POST['password_confirm'];
+
+				if ( strlen( $wachtwoord ) < 6 ) {
+					$errors['password'] = 'Geen geldig wachtwoord (Minimaal 6 tekens)';
+				}
+
+				if ( count( $errors ) === 0 ) {
+					if ( $wachtwoord !== $wachtwoord_confirm ) {
+					$errors['wachtwoord'] = 'Wachtwoorden zijn niet gelijk.';
+					}
+				}
+
+				if ( count( $errors ) === 0 ) {
+
+					$result = updateWachtwoord($gebruiker['id'], $wachtwoord);
+						if($result === true){
+							redirect(url('login.form'));
+
+						}else{
+							$errors['password'] ='Er ging iets fout bij het opslaan van het wachtwoord';
+						}
+
+				}
+
+
+		}
+
+		$template_engine = get_template_engine();
+		echo $template_engine->render( 'password_reset_form', [ 'errors' => $errors, 'reset_code' => $reset_code ] );
+
 	}
 
 }

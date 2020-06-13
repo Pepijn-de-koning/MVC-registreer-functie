@@ -213,3 +213,34 @@ function stuurVerificatieEmail($email, $code) {
 	$mailer->send($message);
 
 }
+
+function stuurWachtwoordResetEmail( $email ) {
+
+	// Code genereren en opslaan bij dit email adres (gebruiker)
+	$reset_code = md5( uniqid( rand(), true ) );
+	$connection = dbConnect();
+	$sql        = "UPDATE `gebruikers` SET `password_reset` = :code WHERE `email` = :email";
+	$statement  = $connection->prepare( $sql );
+	$params     = [
+		'code'  => $reset_code,
+		'email' => $email
+	];
+
+	$statement->execute( $params );
+
+	$url          = url( 'wachtwoord.reset', [ 'reset_code' => $reset_code ] );
+	$absolute_url = absolute_url( $url );
+
+	$mailer  = getSwiftMailer();
+	$message = createEmailMessage( $email, 'Wachtwoord resetten', 'Sharing is Caring', '29118@ma-web.nl' );
+
+	// $email_text = 'klik <a href="' . $absolute_url . '">hier</a> om je wachtwoord te resetten';
+
+	$template_engine = get_template_engine();
+	$html = $template_engine->render('wachtwoord_vergeten_email', ['message' => $message, 'url' => $absolute_url]);
+
+	$message->setBody( $html, 'text/html');
+
+	$mailer->send( $message );
+
+}

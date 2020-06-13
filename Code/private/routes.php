@@ -24,12 +24,14 @@ SimpleRouter::group( [ 'prefix' => site_url() ], function () {
 
 	SimpleRouter::get( '/login/succes', 'LoginController@loginSucces' )->name( 'login.succes' );
 
-	SimpleRouter::get( '/stuur-test-email', 'EmailController@sendTestEmail' )->name( 'email.test' );
-	SimpleRouter::get( '/bekijk-test-email', 'EmailController@viewTestEmail' )->name( 'view.email' );
+	//SimpleRouter::get( '/stuur-test-email', 'EmailController@sendTestEmail' )->name( 'email.test' );
+	//SimpleRouter::get( '/bekijk-test-email', 'EmailController@viewTestEmail' )->name( 'view.email' );
 
 	SimpleRouter::get( '/contact', 'ContactController@contactForm' )->name( 'contact.form' );
 	SimpleRouter::post( '/contact/versturen', 'ContactController@verwerkContactForm' )->name( 'contact.verwerk' );
 
+	SimpleRouter::match(['get','post'], '/wachtwoord-vergeten', 'LoginController@wachtwoordVergeten' )->name( 'wachtwoord.vergeten' );
+	SimpleRouter::match(['get','post'], '/wachtwoord-reset/{reset_code}', 'LoginController@wachtwoordResetForm' )->name( 'wachtwoord.reset' );
 
 
 
